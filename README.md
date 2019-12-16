@@ -13,3 +13,14 @@ TODO: see which movies connect him to other actors.
 
 ### What are some fun shortest path examples?
 Think of random actor pairings and run shortest path on them.
+
+## Running the code
+Create and activate virtualenv:
+```
+python -m venv env
+source env/bin/activate
+```
+Install dependencies:
+```
+pip install -r requirements.txt
+```
