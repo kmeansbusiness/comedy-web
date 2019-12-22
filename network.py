@@ -92,10 +92,26 @@ def get_cliques(G):
         if len(clique) > 2:
             cliques.append((clique, len(clique)))
 
-    import pdb; pdb.set_trace()
-
     for c, c_size in sorted(cliques, key=operator.itemgetter(1), reverse=True)[:10]:
         print(c, c_size)
+
+
+def get_shortest_path(G, source, target):
+    '''
+    Input: graph G, a source actor name and a target actor name
+    Output: Shortest path between source and target actor as well as the connecting movies
+    '''
+
+    path = nx.shortest_path(G, source, target)
+
+    movie_path = []
+    for i in range(len(path)-1):
+        movie = G.get_edge_data(path[i], path[i+1])['movie_list'][0]  # get a movie shared by this pair
+        movie_path.append(movie)
+
+    for i in range(len(path)-1):
+        print(f'{path[i]} => {movie_path[i]} => {path[i+1]}')
+
 
 
 if __name__ == "__main__":
@@ -105,6 +121,5 @@ if __name__ == "__main__":
 
     # get_most_connected_actor(G)
     get_cliques(G)
-
-
+    get_shortest_path(G, 'Will Ferrell', 'Woody Allen')
     import pdb; pdb.set_trace()
