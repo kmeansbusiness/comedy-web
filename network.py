@@ -7,7 +7,7 @@ import operator
 
 # network stuff
 import networkx as nx
-# from pyvis.network import Network
+from pyvis.network import Network
 
 
 def create_collab_dict(movie, collab_dict={}):
@@ -54,7 +54,7 @@ def create_edges(df_main, movie_list):
     return edge_dict
 
 
-def create_network_graph(data_path):
+def create_network_graph(data_path, local_path=None):
     print(f'Loading data from {data_path}')
     df = pd.read_csv(data_path)
 
@@ -75,6 +75,10 @@ def create_network_graph(data_path):
     edges = create_edges(df_movie_subset, df_movie_name)
     edge_list = [(a1, a2, attr) for (a1, a2), attr in edges.items()]
     G.add_edges_from(edge_list)
+
+    if local_path:
+        nx.write_gpickle(G, local_path)
+
     return G
 
 
@@ -99,7 +103,7 @@ def get_cliques(G):
 def get_shortest_path(G, source, target):
     '''
     Input: graph G, a source actor name and a target actor name
-    Output: Shortest path between source and target actor as well as the connecting movies
+    Output: Interleaved path of actors and movies
     '''
 
     path = nx.shortest_path(G, source, target)
@@ -109,17 +113,79 @@ def get_shortest_path(G, source, target):
         movie = G.get_edge_data(path[i], path[i+1])['movie_list'][0]  # get a movie shared by this pair
         movie_path.append(movie)
 
+    interleaved = []
     for i in range(len(path)-1):
-        print(f'{path[i]} => {movie_path[i]} => {path[i+1]}')
+        interleaved.append(path[i])
+        interleaved.append(movie_path[i])
+    interleaved.append(path[-1])
+    return interleaved
 
 
+def draw_subgraph(G, actor):
+    '''
+    Input: Main graph G and starting actor
+    Output: Draws subgraph of that actor and their immediate costars
 
-if __name__ == "__main__":
-    G = create_network_graph('data/comedies_actors.csv')
+    Would've been nice to have more than one level deep, but even n=2 for Will Ferrell didn't load
+    '''
+    nodes = set()
+    nodes.add(actor)
+    for g in G.neighbors(actor):
+        nodes.add(g)
+
+    subgraph = nx.Graph(G.subgraph(nodes))
+    net = Network(height="750px", width="100%", bgcolor="#222222", font_color="white")
+    # net.show_buttons(filter_=['nodes'])
+    net.set_options('''
+    var options = {
+        "physics": {
+            "barnesHut": {
+            "gravitationalConstant": -10450,
+            "centralGravity": 0.8,
+            "springLength": 120,
+            "springConstant": 0.05,
+            "damping": 0.08,
+            "avoidOverlap": 0.56
+            },
+            "maxVelocity": 43,
+            "minVelocity": 0.75,
+            "timestep": 0.56
+        }
+    }
+    ''')
+    net.from_nx(subgraph)
+    # add movie data to hover on edge
+    for node in net.nodes:
+        costar = node['title']
+        # skip self-references
+        if costar == actor:
+            continue
+        movie_list = G.get_edge_data(actor, costar)['movie_list']
+        node["title"] += " Movies:<br>" + "<br>".join(movie_list)
+        node["value"] = len(movie_list)
+    net.show(f'{actor}.html')
+
+
+def print_top_pairs(G):
     top_pairs = sorted(G.edges.data('weight'), key=lambda r: r[2], reverse=True)[:3]
     print(f"Top Actor Pairs: {top_pairs}")
 
-    # get_most_connected_actor(G)
-    get_cliques(G)
-    get_shortest_path(G, 'Will Ferrell', 'Woody Allen')
-    import pdb; pdb.set_trace()
+
+def run(cache=True):
+    local_path = 'network_graph.pkl'
+
+    if cache:
+        print(f'Loading graph from {local_path}...')
+        G = nx.read_gpickle(local_path)
+    else:
+        print('Rebuilding graph...')
+        G = create_network_graph('data/comedies_actors.csv', local_path)
+
+    actor = 'Will Ferrell'
+    print(f'Drawing subgraph for {actor}...')
+    draw_subgraph(G, 'Will Ferrell')
+    print('Done!')
+
+
+if __name__ == '__main__':
+    run()
