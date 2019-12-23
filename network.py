@@ -128,6 +128,7 @@ def draw_subgraph(G, actor):
 
     Would've been nice to have more than one level deep, but even n=2 for Will Ferrell didn't load
     '''
+    print(f'Drawing subgraph for {actor}')
     nodes = set()
     nodes.add(actor)
     for g in G.neighbors(actor):
@@ -163,7 +164,8 @@ def draw_subgraph(G, actor):
         movie_list = G.get_edge_data(actor, costar)['movie_list']
         node["title"] += " Movies:<br>" + "<br>".join(movie_list)
         node["value"] = len(movie_list)
-    net.show(f'{actor}.html')
+    file_name = '_'.join(actor.split()) + '.html'
+    net.show(f'{file_name}')
 
 
 def print_top_pairs(G):
@@ -180,10 +182,9 @@ def run(cache=True):
     else:
         print('Rebuilding graph...')
         G = create_network_graph('data/comedies_actors.csv', local_path)
-
     actor = 'Will Ferrell'
-    print(f'Drawing subgraph for {actor}...')
     draw_subgraph(G, 'Will Ferrell')
+    draw_subgraph(G, 'James Franco')
     print('Done!')
 
 
