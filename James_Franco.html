@@ -1,0 +1,77 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 100%;
+            height: 750px;
+            background-color: #222222;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"font": {"color": "white"}, "id": "Kate Hudson", "label": "Kate Hudson", "shape": "dot", "title": "Kate Hudson Movies:\u003cbr\u003eFool\u0027s Gold", "value": 1}, {"font": {"color": "white"}, "id": "Donald Sutherland", "label": "Donald Sutherland", "shape": "dot", "title": "Donald Sutherland Movies:\u003cbr\u003eFool\u0027s Gold", "value": 1}, {"font": {"color": "white"}, "id": "Matthew McConaughey", "label": "Matthew McConaughey", "shape": "dot", "title": "Matthew McConaughey Movies:\u003cbr\u003eFool\u0027s Gold", "value": 1}, {"font": {"color": "white"}, "id": "James Franco", "label": "James Franco", "shape": "dot", "title": "James Franco"}, {"font": {"color": "white"}, "id": "Joey King", "label": "Joey King", "shape": "dot", "title": "Joey King Movies:\u003cbr\u003eZeroville", "value": 1}, {"font": {"color": "white"}, "id": "Sienna Miller", "label": "Sienna Miller", "shape": "dot", "title": "Sienna Miller Movies:\u003cbr\u003eCamille", "value": 1}, {"font": {"color": "white"}, "id": "Natalie Portman", "label": "Natalie Portman", "shape": "dot", "title": "Natalie Portman Movies:\u003cbr\u003eYour Highness", "value": 1}, {"font": {"color": "white"}, "id": "Danny McBride", "label": "Danny McBride", "shape": "dot", "title": "Danny McBride Movies:\u003cbr\u003ePineapple Express\u003cbr\u003eYour Highness", "value": 2}, {"font": {"color": "white"}, "id": "Seth Rogen", "label": "Seth Rogen", "shape": "dot", "title": "Seth Rogen Movies:\u003cbr\u003ePineapple Express\u003cbr\u003eThis Is the End\u003cbr\u003eThe Interview\u003cbr\u003eThe Disaster Artist", "value": 4}, {"font": {"color": "white"}, "id": "Lizzy Caplan", "label": "Lizzy Caplan", "shape": "dot", "title": "Lizzy Caplan Movies:\u003cbr\u003eThe Interview", "value": 1}, {"font": {"color": "white"}, "id": "Gary Cole", "label": "Gary Cole", "shape": "dot", "title": "Gary Cole Movies:\u003cbr\u003ePineapple Express", "value": 1}, {"font": {"color": "white"}, "id": "Jonah Hill", "label": "Jonah Hill", "shape": "dot", "title": "Jonah Hill Movies:\u003cbr\u003eThis Is the End", "value": 1}, {"font": {"color": "white"}, "id": "Jay Baruchel", "label": "Jay Baruchel", "shape": "dot", "title": "Jay Baruchel Movies:\u003cbr\u003eThis Is the End", "value": 1}, {"font": {"color": "white"}, "id": "Ari Graynor", "label": "Ari Graynor", "shape": "dot", "title": "Ari Graynor Movies:\u003cbr\u003eThe Disaster Artist", "value": 1}, {"font": {"color": "white"}, "id": "Matthew Modine", "label": "Matthew Modine", "shape": "dot", "title": "Matthew Modine Movies:\u003cbr\u003eThe Heyday of the Insensitive Bastards", "value": 1}, {"font": {"color": "white"}, "id": "Will Ferrell", "label": "Will Ferrell", "shape": "dot", "title": "Will Ferrell Movies:\u003cbr\u003eZeroville", "value": 1}, {"font": {"color": "white"}, "id": "Cedric the Entertainer", "label": "Cedric the Entertainer", "shape": "dot", "title": "Cedric the Entertainer Movies:\u003cbr\u003eWhy Him?", "value": 1}, {"font": {"color": "white"}, "id": "Zoey Deutch", "label": "Zoey Deutch", "shape": "dot", "title": "Zoey Deutch Movies:\u003cbr\u003eWhy Him?", "value": 1}, {"font": {"color": "white"}, "id": "Scott Caan", "label": "Scott Caan", "shape": "dot", "title": "Scott Caan Movies:\u003cbr\u003eYou Always Stalk the Ones You Love", "value": 1}]);
+        edges = new vis.DataSet([{"from": "Kate Hudson", "to": "Donald Sutherland"}, {"from": "Kate Hudson", "to": "Matthew McConaughey"}, {"from": "Kate Hudson", "to": "James Franco"}, {"from": "Kate Hudson", "to": "Joey King"}, {"from": "Matthew McConaughey", "to": "Donald Sutherland"}, {"from": "Matthew McConaughey", "to": "James Franco"}, {"from": "Sienna Miller", "to": "James Franco"}, {"from": "Natalie Portman", "to": "James Franco"}, {"from": "Natalie Portman", "to": "Danny McBride"}, {"from": "Seth Rogen", "to": "Lizzy Caplan"}, {"from": "Seth Rogen", "to": "Gary Cole"}, {"from": "Seth Rogen", "to": "James Franco"}, {"from": "Seth Rogen", "to": "Danny McBride"}, {"from": "Seth Rogen", "to": "Jonah Hill"}, {"from": "Seth Rogen", "to": "Jay Baruchel"}, {"from": "Seth Rogen", "to": "Ari Graynor"}, {"from": "Donald Sutherland", "to": "James Franco"}, {"from": "Lizzy Caplan", "to": "James Franco"}, {"from": "Matthew Modine", "to": "Joey King"}, {"from": "Matthew Modine", "to": "James Franco"}, {"from": "Jay Baruchel", "to": "James Franco"}, {"from": "Jay Baruchel", "to": "Jonah Hill"}, {"from": "Will Ferrell", "to": "Jonah Hill"}, {"from": "Will Ferrell", "to": "Gary Cole"}, {"from": "Will Ferrell", "to": "Danny McBride"}, {"from": "Will Ferrell", "to": "James Franco"}, {"from": "Will Ferrell", "to": "Joey King"}, {"from": "Gary Cole", "to": "James Franco"}, {"from": "Gary Cole", "to": "Danny McBride"}, {"from": "Cedric the Entertainer", "to": "James Franco"}, {"from": "Cedric the Entertainer", "to": "Zoey Deutch"}, {"from": "Ari Graynor", "to": "Jonah Hill"}, {"from": "Ari Graynor", "to": "James Franco"}, {"from": "Scott Caan", "to": "James Franco"}, {"from": "Danny McBride", "to": "James Franco"}, {"from": "Zoey Deutch", "to": "James Franco"}, {"from": "James Franco", "to": "Joey King"}, {"from": "James Franco", "to": "Jonah Hill"}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {"physics": {"barnesHut": {"gravitationalConstant": -10450, "centralGravity": 0.8, "springLength": 120, "springConstant": 0.05, "damping": 0.08, "avoidOverlap": 0.56}, "maxVelocity": 43, "minVelocity": 0.75, "timestep": 0.56}};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
